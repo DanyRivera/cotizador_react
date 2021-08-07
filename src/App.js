@@ -9,7 +9,7 @@ import Spinner from './components/Spinner';
 
 const Contenedor = styled.div`
   max-width: 600px;
-  margin: 0 auto;
+  margin: 10% auto;
 `;
 
 const ContenedorFormulario = styled.div`
