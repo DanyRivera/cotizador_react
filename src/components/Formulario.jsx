@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import React, {useState} from 'react';
-import { obtenerDiferenciaYear } from '../helper';
+import PropTypes from 'prop-types';
+import { obtenerDiferenciaYear, calcularMarca, calcularPlan } from '../helper';
 
 const Campo = styled.div`
     display: flex;
@@ -51,7 +52,7 @@ const Error = styled.div`
     margin-bottom: 2rem;
 `;
 
-const Formulario = () => {
+const Formulario = ({setResumen, setSpinner}) => {
 
     const [datos, setDatos] = useState({
         marca: '',
@@ -92,21 +93,34 @@ const Formulario = () => {
         //obtener la diferencia de años
         const diferencia = obtenerDiferenciaYear(year);
 
-        console.log(diferencia);
 
-        //por cada año hay que restarel 3%
+        //por cada año hay que restar el 3%
         resultado -= ((diferencia * 3) * resultado) / 100;
-
-        console.log(resultado)
 
         //Americano 15%
         //Asiatico 5%
         //Europeo 30%
+        resultado = calcularMarca(marca) * resultado;
 
         //Básico aumenta 20%
         //Completo 50%
+        resultado = parseFloat( calcularPlan(plan) * resultado ).toFixed(2);
+
+        setSpinner(true);
 
         //Total
+        setTimeout(() => {
+
+            //Elimina Spinner
+            setSpinner(false);
+
+            //Pasa la info al componente principal
+            setResumen({
+                cotizacion: Number(resultado),
+                datos
+            })
+
+        }, 3000);
 
     }
 
@@ -126,8 +140,8 @@ const Formulario = () => {
                 >
                     <option value="">-- Seleccione --</option>
                     <option value="americano">Americano</option>
-                    <option value="americano">Europeo</option>
-                    <option value="americano">Asiatico</option>
+                    <option value="europeo">Europeo</option>
+                    <option value="asiatico">Asiatico</option>
                 </Select>
             </Campo>
 
@@ -182,6 +196,11 @@ const Formulario = () => {
 
         </form>
     );
+}
+
+Formulario.propTypes = {
+    setResumen: PropTypes.func.isRequired,
+    setSpinner: PropTypes.func.isRequired
 }
 
 export default Formulario;
